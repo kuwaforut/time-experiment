@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>時間認知実験</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f2;
+  --surface:#ffffff;
+  --surface2:#f0efe9;
+  --border:#e0ddd4;
+  --border2:#c8c4b8;
+  --text:#1a1916;
+  --text2:#6b6860;
+  --text3:#a8a59e;
+  --accent:#2c5f2e;
+  --accent-light:#eef4ee;
+  --accent2:#1e4220;
+  --warn:#8b3a0f;
+  --mono:'DM Mono',monospace;
+  --sans:'Zen Kaku Gothic New',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
+.container{width:100%;max-width:580px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp 0.35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;color:var(--text3);text-transform:uppercase;margin-bottom:1.75rem;display:flex;align-items:center;gap:8px;}
+.tag::before{content:'';display:block;width:20px;height:1px;background:var(--text3);}
+h1{font-size:26px;font-weight:400;letter-spacing:-0.02em;line-height:1.3;margin-bottom:0.6rem;}
+h2{font-size:20px;font-weight:400;letter-spacing:-0.01em;margin-bottom:1.25rem;}
+.sub{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1.75rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;}
+.field-label{font-size:11px;font-family:var(--mono);letter-spacing:0.12em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+input[type=text],input[type=number]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:16px;font-weight:300;padding:12px 14px;outline:none;transition:border-color 0.2s;}
+input[type=text]:focus,input[type=number]:focus{border-color:var(--accent);}
+input[type=text]::placeholder{color:var(--text3);}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:7px;font-family:var(--sans);font-size:14px;font-weight:400;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.02em;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-primary:active{transform:scale(0.985);}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{background:var(--surface2);}
+.video-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.25rem;position:relative;}
+.video-placeholder{height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text3);font-size:13px;}
+.video-wrap iframe,.video-wrap video{width:100%;display:block;border:none;}
+.progress-wrap{margin-bottom:1.75rem;}
+.progress-meta{display:flex;justify-content:space-between;margin-bottom:8px;}
+.progress-label{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.progress-label strong{color:var(--text2);}
+.progress-track{height:1px;background:var(--border);border-radius:1px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.5s ease;}
+.wait-box{padding:3.5rem 2rem;text-align:center;}
+.wait-dots{display:flex;justify-content:center;gap:5px;margin-bottom:1.25rem;}
+.wd{width:4px;height:4px;border-radius:50%;background:var(--text3);animation:wdp 1.4s infinite;}
+.wd:nth-child(2){animation-delay:0.2s}.wd:nth-child(3){animation-delay:0.4s}
+@keyframes wdp{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+.wait-msg{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.08em;}
+.measure-box{padding:0.5rem 0;}
+.instruction{font-size:13px;color:var(--text2);text-align:center;line-height:1.8;margin-bottom:1.25rem;min-height:48px;}
+.btn-measure{width:100%;padding:32px 20px;border-radius:10px;font-family:var(--sans);font-size:15px;font-weight:300;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:all 0.15s;line-height:1.5;}
+.btn-measure:hover:not(:disabled){background:var(--surface2);border-color:var(--accent);}
+.btn-measure:active:not(:disabled){transform:scale(0.988);}
+.btn-measure:disabled{opacity:0.25;cursor:not-allowed;transform:none;}
+.btn-measure.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.status-row{display:flex;align-items:center;gap:8px;margin-top:1rem;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;}
+.sdot.rec{background:var(--accent);animation:sdp 1s infinite;}
+.sdot.done{background:var(--accent);}
+@keyframes sdp{0%,100%{opacity:1}50%{opacity:0.25}}
+.stxt{font-family:var(--mono);font-size:11px;color:var(--text2);}
+.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+/* アンケート */
+.q-block{margin-bottom:1.5rem;}
+.q-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.q-num{font-family:var(--mono);font-size:10px;color:var(--text3);margin-right:6px;}
+.radio-group{display:flex;flex-direction:column;gap:6px;}
+.radio-label{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all 0.15s;font-size:13px;color:var(--text2);}
+.radio-label:hover{background:var(--surface2);border-color:var(--border2);}
+.radio-label input[type=radio]{accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;}
+.radio-label.selected{background:var(--accent-light);border-color:var(--accent);color:var(--text);}
+/* 完了 */
+.thanks-box{text-align:center;padding:2rem 0;}
+.thanks-icon{font-size:40px;margin-bottom:1rem;}
+.thanks-title{font-size:22px;font-weight:400;margin-bottom:0.5rem;}
+.thanks-sub{font-size:13px;color:var(--text2);line-height:1.7;}
+/* スピナー */
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- S0: 被験者番号入力 -->
+<div id="s-entry" class="screen active">
+  <div class="tag">Time Perception Lab</div>
+  <h1>時間認知実験</h1>
+  <p class="sub">実験を開始する前に、被験者番号を入力してください。</p>
+  <div class="card">
+    <div class="field-label">被験者番号</div>
+    <input type="text" id="subject-id" placeholder="例：P001" autocomplete="off">
+  </div>
+  <button class="btn btn-primary" onclick="enterSubject()">実験を開始する →</button>
+</div>
+
+<!-- S1: 動画視聴 -->
+<div id="s-video" class="screen">
+  <div class="tag">Step 1 · 動画視聴</div>
+  <h2>動画を視聴してください</h2>
+  <div class="video-wrap" id="video-wrap">
+    <div class="video-placeholder">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m16 8-5 3 5 3V8Z"/><path d="M8 21h8M12 17v4"/></svg>
+      <span>実験動画</span>
+    </div>
+  </div>
+  <p class="sub">動画を最後まで視聴し終えたら下のボタンを押してください。</p>
+  <button class="btn btn-primary" id="video-done-btn" onclick="videoDone()">動画を見終えた →</button>
+</div>
+
+<!-- S2: 計測 -->
+<div id="s-measure" class="screen">
+  <div class="tag">Step 2 · 時間感覚計測</div>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span class="progress-label">試行 <strong id="t-cur">0</strong> / <strong id="t-tot">5</strong></span>
+      <span class="progress-label" id="t-phase">待機中</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="p-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="waiting-box" class="wait-box card">
+    <div class="wait-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+    <div class="wait-msg" id="wait-msg">次の計測まで待機中...</div>
+  </div>
+
+  <div id="measure-box" class="measure-box" style="display:none">
+    <p class="instruction" id="m-instruction">ボタンを押して計測を開始してください</p>
+    <button class="btn-measure" id="m-btn" onclick="measurePress()">計測を開始する</button>
+    <div class="status-row">
+      <div class="sdot" id="s-dot"></div>
+      <span class="stxt" id="s-txt">待機中</span>
+    </div>
+  </div>
+</div>
+
+<!-- S3: アンケート -->
+<div id="s-survey" class="screen">
+  <div class="tag">Step 3 · アンケート</div>
+  <h2>アンケートにご回答ください</h2>
+  <p class="sub">以下の質問にお答えください。全て回答後に送信してください。</p>
+  <div id="survey-form"></div>
+  <button class="btn btn-primary" id="submit-btn" onclick="submitAll()">結果を送信する →</button>
+</div>
+
+<!-- S4: 完了 -->
+<div id="s-done" class="screen">
+  <div class="thanks-box">
+    <div class="thanks-icon">🌿</div>
+    <div class="thanks-title">ご協力ありがとうございました</div>
+    <p class="thanks-sub" style="margin-top:0.5rem;margin-bottom:2rem">データを送信しました。</p>
+    <button class="btn btn-primary" onclick="backToEntry()">次の被験者の実験を開始する →</button>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ── 設定（admin.html で書き換え可能、localStorage 経由）──────────────────
+const DEFAULT_CFG = {
+  intervals: [0, 25, 30, 35, 30],   // 第1回は動画直後(0)、以降のインターバル秒
+  videoUrl: '',
+  gasUrl: '',
+  surveyQuestions: [
+    // { text: '質問文', options: ['選択肢1','選択肢2'] } の形式で追加
+  ]
+};
+
+function loadCfg() {
+  try {
+    const s = localStorage.getItem('exp_config');
+    return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG;
+  } catch(e) { return DEFAULT_CFG; }
+}
+
+// ── 状態 ──────────────────────────────────────────────────────────────────
+let cfg, subjectId, results, trialIndex, phase, startPressTime, shownAt, waitTimer;
+const synth = window.speechSynthesis;
+
+function speak(text, cb) {
+  if (!synth) { cb && cb(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.92;
+  if (cb) u.onend = cb;
+  synth.speak(u);
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── 被験者番号入力 ────────────────────────────────────────────────────────
+function enterSubject() {
+  const val = document.getElementById('subject-id').value.trim();
+  if (!val) { alert('被験者番号を入力してください'); return; }
+  subjectId = val;
+  cfg = loadCfg();
+  results = [];
+  trialIndex = 0;
+  phase = 'idle';
+
+  document.getElementById('t-tot').textContent = cfg.intervals.length;
+  setupVideo();
+  show('s-video');
+}
+
+// ── 動画セットアップ ──────────────────────────────────────────────────────
+function setupVideo() {
+  const wrap = document.getElementById('video-wrap');
+  const url = cfg.videoUrl || '';
+  if (!url) return;
+
+  let embed = '';
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+
+  if (ytMatch) {
+    embed = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  } else if (driveMatch) {
+    embed = `<iframe width="100%" height="315" src="https://drive.google.com/file/d/${driveMatch[1]}/preview" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;
+  } else {
+    embed = `<video src="${url}" controls autoplay style="width:100%;max-height:315px;display:block;"></video>`;
+  }
+  wrap.innerHTML = embed;
+}
+
+// ── 動画終了 → 計測へ ────────────────────────────────────────────────────
+function videoDone() {
+  show('s-measure');
+  speak('動画の視聴が終わりました。これから時間感覚の計測を行います。ボタンが表示されたら押してください。', () => {
+    scheduleNext();
+  });
+}
+
+// ── 次の試行をスケジュール ────────────────────────────────────────────────
+function scheduleNext() {
+  if (trialIndex >= cfg.intervals.length) { showSurvey(); return; }
+  updateProgress();
+
+  const waitSec = cfg.intervals[trialIndex];
+  document.getElementById('waiting-box').style.display = '';
+  document.getElementById('measure-box').style.display = 'none';
+  document.getElementById('wait-msg').textContent =
+    waitSec === 0 ? '計測準備中...' : `次の計測まで約 ${waitSec} 秒 待機中...`;
+  document.getElementById('t-phase').textContent = '待機中';
+
+  waitTimer = setTimeout(() => showMeasureBtn(), waitSec * 1000 || 800);
+}
+
+function showMeasureBtn() {
+  shownAt = performance.now();
+  document.getElementById('waiting-box').style.display = 'none';
+  document.getElementById('measure-box').style.display = '';
+  const btn = document.getElementById('m-btn');
+  btn.textContent = '計測を開始する';
+  btn.disabled = false;
+  btn.className = 'btn-measure';
+  document.getElementById('m-instruction').textContent = 'ボタンを押して計測を開始してください';
+  document.getElementById('s-dot').className = 'sdot';
+  document.getElementById('s-txt').textContent = '待機中';
+  document.getElementById('t-phase').textContent = '計測待機';
+  phase = 'waiting-start';
+  speak('ボタンが表示されました。押してください。');
+}
+
+function measurePress() {
+  const now = performance.now();
+  const btn = document.getElementById('m-btn');
+
+  if (phase === 'waiting-start') {
+    startPressTime = now;
+    phase = 'measuring';
+    btn.textContent = '20秒経ったと思ったら押してください';
+    btn.className = 'btn-measure active';
+    document.getElementById('m-instruction').textContent = '計測中... 20秒経ったと感じたらボタンを押してください';
+    document.getElementById('s-dot').className = 'sdot rec';
+    document.getElementById('s-txt').textContent = '計測中';
+    document.getElementById('t-phase').textContent = '計測中';
+
+  } else if (phase === 'measuring') {
+    const endTime = now;
+    const reactionMs = startPressTime - shownAt;
+    const measuredMs = endTime - startPressTime;
+    results.push({
+      trial: trialIndex + 1,
+      shownAt: shownAt,
+      startMs: startPressTime,
+      endMs: endTime,
+      reactionMs: parseFloat(reactionMs.toFixed(2)),
+      measuredMs: parseFloat(measuredMs.toFixed(2)),
+      measuredSec: parseFloat((measuredMs / 1000).toFixed(2)),
+      scheduledIntervalSec: cfg.intervals[trialIndex]
+    });
+    phase = 'idle';
+    btn.disabled = true;
+    btn.className = 'btn-measure';
+    btn.textContent = '記録完了';
+    document.getElementById('s-dot').className = 'sdot done';
+    document.getElementById('s-txt').textContent = '記録済み';
+    document.getElementById('t-phase').textContent = '完了';
+    trialIndex++;
+    setTimeout(() => scheduleNext(), 700);
+  }
+}
+
+function updateProgress() {
+  const pct = (trialIndex / cfg.intervals.length) * 100;
+  document.getElementById('p-fill').style.width = pct + '%';
+  document.getElementById('t-cur').textContent = trialIndex;
+}
+
+// ── アンケート ────────────────────────────────────────────────────────────
+function showSurvey() {
+  document.getElementById('p-fill').style.width = '100%';
+  document.getElementById('t-cur').textContent = cfg.intervals.length;
+
+  const questions = cfg.surveyQuestions || [];
+  const form = document.getElementById('survey-form');
+  form.innerHTML = '';
+
+  if (questions.length === 0) {
+    form.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:1.5rem">（アンケート項目は管理者が設定します）</p>';
+  } else {
+    questions.forEach((q, i) => {
+      const block = document.createElement('div');
+      block.className = 'q-block card';
+      block.innerHTML = `<p class="q-text"><span class="q-num">Q${i+1}.</span>${q.text}</p>
+        <div class="radio-group" id="rg-${i}">
+          ${q.options.map((opt, j) => `
+            <label class="radio-label" id="rl-${i}-${j}">
+              <input type="radio" name="q${i}" value="${opt}" onchange="selectRadio(${i},${j})">
+              ${opt}
+            </label>`).join('')}
+        </div>`;
+      form.appendChild(block);
+    });
+  }
+  show('s-survey');
+}
+
+function selectRadio(qi, oi) {
+  const q = cfg.surveyQuestions[qi];
+  q.options.forEach((_, j) => {
+    document.getElementById(`rl-${qi}-${j}`).classList.toggle('selected', j === oi);
+  });
+}
+
+// ── 送信 ──────────────────────────────────────────────────────────────────
+async function submitAll() {
+  // アンケート回答収集
+  const answers = {};
+  (cfg.surveyQuestions || []).forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    answers[`Q${i+1}`] = sel ? sel.value : '未回答';
+  });
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> 送信中...';
+
+  const payload = {
+    subjectId,
+    experimentDate: new Date().toISOString(),
+    config: { intervals: cfg.intervals },
+    results: results.map(r => ({
+      trial: r.trial,
+      reactionMs: r.reactionMs,
+      measuredMs: r.measuredMs,
+      measuredSec: r.measuredSec,
+      scheduledIntervalSec: r.scheduledIntervalSec
+    })),
+    survey: answers
+  };
+
+  if (cfg.gasUrl) {
+    try {
+      await fetch(cfg.gasUrl, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) {}
+  }
+
+  show('s-done');
+}
+
+// ── 次の被験者へ ──────────────────────────────────────────────────────────
+function backToEntry() {
+  clearTimeout(waitTimer);
+  synth && synth.cancel();
+  document.getElementById('subject-id').value = '';
+  show('s-entry');
+}
+
+// ── 初期化 ────────────────────────────────────────────────────────────────
+document.getElementById('subject-id').addEventListener('keydown', e => {
+  if (e.key === 'Enter') enterSubject();
+});
+</script>
+</body>
+</html>
