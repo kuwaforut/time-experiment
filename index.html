@@ -459,7 +459,7 @@ function backToEntry() {
 }
 
 document.getElementById('subject-id').addEventListener('keydown', e => {
-  if (e.key === 'Enter') enterSubject();
+  if (e.key === 'Enter' && !e.isComposing) enterSubject();
 });
 </script>
 </body>
