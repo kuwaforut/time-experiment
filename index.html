@@ -418,6 +418,42 @@ async function submitAll() {
 function backToEntry() {
   clearTimeout(waitTimer);
   synth && synth.cancel();
+
+  // 状態リセット
+  results = [];
+  trialIndex = 0;
+  phase = 'idle';
+  prePhase = 'waiting-start';
+  videoEndTime = null;
+  startPressTime = null;
+
+  // 動画前計測ボタンを完全リセット
+  const preBtn = document.getElementById('pre-btn');
+  preBtn.textContent = '計測を開始する';
+  preBtn.disabled = false;
+  preBtn.className = 'btn-m';
+  document.getElementById('pre-instr').textContent = 'ボタンを押して計測を開始してください';
+  document.getElementById('pre-dot').className = 'sdot';
+  document.getElementById('pre-txt').textContent = '待機中';
+
+  // 動画エリアをプレースホルダーに戻す
+  document.getElementById('video-wrap').innerHTML = `
+    <div class="video-placeholder">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m16 8-5 3 5 3V8Z"/></svg>
+      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.1em">実験動画</span>
+    </div>`;
+
+  // 計測画面もリセット
+  document.getElementById('wait-box').style.display = 'none';
+  document.getElementById('mbox').style.display = '';
+  document.getElementById('p-fill').style.width = '0%';
+  document.getElementById('t-cur').textContent = '1';
+
+  // 送信ボタンもリセット
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.disabled = false;
+  submitBtn.textContent = '結果を送信する';
+
   document.getElementById('subject-id').value = '';
   show('s-entry');
 }
