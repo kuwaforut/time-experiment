@@ -4,208 +4,203 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>時間認知実験</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f7f6f2;
-  --surface:#ffffff;
-  --surface2:#f0efe9;
-  --border:#e0ddd4;
-  --border2:#c8c4b8;
-  --text:#1a1916;
-  --text2:#6b6860;
-  --text3:#a8a59e;
-  --accent:#2c5f2e;
-  --accent-light:#eef4ee;
-  --accent2:#1e4220;
-  --warn:#8b3a0f;
-  --mono:'DM Mono',monospace;
-  --sans:'Zen Kaku Gothic New',sans-serif;
+  --bg:#f5f3ee;--surface:#fff;--surface2:#edeae2;--border:#ddd9ce;--border2:#c4bfb2;
+  --text:#1c1a16;--text2:#6b6760;--text3:#aaa69e;
+  --accent:#3d6b40;--accent-bg:#eef4ec;--accent2:#2a4d2c;
+  --serif:'Shippori Mincho',serif;--mono:'DM Mono',monospace;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
-.container{width:100%;max-width:580px;}
+body{background:var(--bg);color:var(--text);font-family:var(--serif);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
+.container{width:100%;max-width:540px;}
 .screen{display:none;}
-.screen.active{display:block;animation:fadeUp 0.35s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.tag{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;color:var(--text3);text-transform:uppercase;margin-bottom:1.75rem;display:flex;align-items:center;gap:8px;}
-.tag::before{content:'';display:block;width:20px;height:1px;background:var(--text3);}
-h1{font-size:26px;font-weight:400;letter-spacing:-0.02em;line-height:1.3;margin-bottom:0.6rem;}
-h2{font-size:20px;font-weight:400;letter-spacing:-0.01em;margin-bottom:1.25rem;}
-.sub{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1.75rem;}
+.screen.active{display:block;animation:up .4s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.kv{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px;}
+.kv::after{content:'';flex:1;height:1px;background:var(--border);}
+h1{font-size:27px;font-weight:400;line-height:1.3;margin-bottom:.75rem;}
+h2{font-size:21px;font-weight:400;line-height:1.4;margin-bottom:1.25rem;}
+.lead{font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;margin-bottom:2rem;letter-spacing:.02em;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;}
-.field-label{font-size:11px;font-family:var(--mono);letter-spacing:0.12em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
-input[type=text],input[type=number]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:16px;font-weight:300;padding:12px 14px;outline:none;transition:border-color 0.2s;}
-input[type=text]:focus,input[type=number]:focus{border-color:var(--accent);}
-input[type=text]::placeholder{color:var(--text3);}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:7px;font-family:var(--sans);font-size:14px;font-weight:400;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.02em;}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:var(--accent2);}
-.btn-primary:active{transform:scale(0.985);}
-.btn-primary:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
-.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
-.btn-ghost:hover{background:var(--surface2);}
-.video-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.25rem;position:relative;}
-.video-placeholder{height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text3);font-size:13px;}
+.field-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+input[type=text]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--mono);font-size:18px;padding:14px 16px;outline:none;transition:border-color .2s;letter-spacing:.08em;}
+input[type=text]:focus{border-color:var(--accent);}
+input[type=text]::placeholder{color:var(--text3);font-size:14px;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:8px;font-family:var(--serif);font-size:15px;cursor:pointer;border:none;transition:all .18s;}
+.btn-p{background:var(--accent);color:#fff;}
+.btn-p:hover{background:var(--accent2);}
+.btn-p:active{transform:scale(.985);}
+.btn-p:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+.video-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem;}
+.video-placeholder{height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text3);}
 .video-wrap iframe,.video-wrap video{width:100%;display:block;border:none;}
-.progress-wrap{margin-bottom:1.75rem;}
-.progress-meta{display:flex;justify-content:space-between;margin-bottom:8px;}
-.progress-label{font-family:var(--mono);font-size:11px;color:var(--text3);}
-.progress-label strong{color:var(--text2);}
-.progress-track{height:1px;background:var(--border);border-radius:1px;overflow:hidden;}
-.progress-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.5s ease;}
-.wait-box{padding:3.5rem 2rem;text-align:center;}
-.wait-dots{display:flex;justify-content:center;gap:5px;margin-bottom:1.25rem;}
-.wd{width:4px;height:4px;border-radius:50%;background:var(--text3);animation:wdp 1.4s infinite;}
-.wd:nth-child(2){animation-delay:0.2s}.wd:nth-child(3){animation-delay:0.4s}
-@keyframes wdp{0%,80%,100%{opacity:0.2}40%{opacity:1}}
-.wait-msg{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.08em;}
-.measure-box{padding:0.5rem 0;}
-.instruction{font-size:13px;color:var(--text2);text-align:center;line-height:1.8;margin-bottom:1.25rem;min-height:48px;}
-.btn-measure{width:100%;padding:32px 20px;border-radius:10px;font-family:var(--sans);font-size:15px;font-weight:300;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:all 0.15s;line-height:1.5;}
-.btn-measure:hover:not(:disabled){background:var(--surface2);border-color:var(--accent);}
-.btn-measure:active:not(:disabled){transform:scale(0.988);}
-.btn-measure:disabled{opacity:0.25;cursor:not-allowed;transform:none;}
-.btn-measure.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
-.status-row{display:flex;align-items:center;gap:8px;margin-top:1rem;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+.prog-wrap{margin-bottom:2rem;}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:10px;}
+.prog-lbl{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.08em;}
+.prog-lbl strong{color:var(--text2);}
+.prog-track{height:1px;background:var(--border);overflow:hidden;}
+.prog-fill{height:100%;background:var(--accent);transition:width .5s ease;}
+.wait-box{padding:4rem 2rem;text-align:center;}
+.wdots{display:flex;justify-content:center;gap:6px;margin-bottom:1.5rem;}
+.wd{width:4px;height:4px;border-radius:50%;background:var(--text3);animation:wd 1.4s infinite;}
+.wd:nth-child(2){animation-delay:.23s}.wd:nth-child(3){animation-delay:.46s}
+@keyframes wd{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.wait-msg{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;}
+.mbox{padding:.5rem 0;}
+.instr{font-family:var(--mono);font-size:12px;color:var(--text2);text-align:center;line-height:2;margin-bottom:1.5rem;min-height:44px;letter-spacing:.04em;}
+.btn-m{width:100%;padding:36px 20px;border-radius:10px;font-family:var(--serif);font-size:16px;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:all .18s;line-height:1.6;}
+.btn-m:hover:not(:disabled){background:var(--surface2);border-color:var(--accent);}
+.btn-m:active:not(:disabled){transform:scale(.988);}
+.btn-m:disabled{opacity:.22;cursor:not-allowed;transform:none;}
+.btn-m.active{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.srow{display:flex;align-items:center;gap:8px;margin-top:1rem;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;}
 .sdot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;}
 .sdot.rec{background:var(--accent);animation:sdp 1s infinite;}
 .sdot.done{background:var(--accent);}
-@keyframes sdp{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes sdp{0%,100%{opacity:1}50%{opacity:.2}}
 .stxt{font-family:var(--mono);font-size:11px;color:var(--text2);}
-.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
-/* アンケート */
-.q-block{margin-bottom:1.5rem;}
-.q-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.q-block{margin-bottom:1.25rem;}
+.q-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:10px;}
 .q-num{font-family:var(--mono);font-size:10px;color:var(--text3);margin-right:6px;}
-.radio-group{display:flex;flex-direction:column;gap:6px;}
-.radio-label{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all 0.15s;font-size:13px;color:var(--text2);}
-.radio-label:hover{background:var(--surface2);border-color:var(--border2);}
-.radio-label input[type=radio]{accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;}
-.radio-label.selected{background:var(--accent-light);border-color:var(--accent);color:var(--text);}
-/* 完了 */
-.thanks-box{text-align:center;padding:2rem 0;}
-.thanks-icon{font-size:40px;margin-bottom:1rem;}
-.thanks-title{font-size:22px;font-weight:400;margin-bottom:0.5rem;}
-.thanks-sub{font-size:13px;color:var(--text2);line-height:1.7;}
-/* スピナー */
-.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;}
+.rgroup{display:flex;flex-direction:column;gap:6px;}
+.rlabel{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;font-size:14px;color:var(--text2);font-family:var(--mono);}
+.rlabel:hover{background:var(--surface2);border-color:var(--border2);}
+.rlabel input{accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;}
+.rlabel.sel{background:var(--accent-bg);border-color:var(--accent);color:var(--text);}
+.thanks{text-align:center;padding:3rem 0;}
+.thanks-mark{font-size:13px;font-family:var(--mono);color:var(--accent);letter-spacing:.2em;margin-bottom:1.5rem;}
+.thanks-title{font-size:26px;font-weight:400;margin-bottom:.75rem;}
+.thanks-sub{font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;margin-bottom:2.5rem;}
+.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="container">
 
-<!-- S0: 被験者番号入力 -->
+<!-- S0: 被験者番号 -->
 <div id="s-entry" class="screen active">
-  <div class="tag">Time Perception Lab</div>
+  <div class="kv">Time Perception Lab</div>
   <h1>時間認知実験</h1>
-  <p class="sub">実験を開始する前に、被験者番号を入力してください。</p>
+  <p class="lead">実験を開始する前に、<br>被験者番号を入力してください。</p>
   <div class="card">
     <div class="field-label">被験者番号</div>
-    <input type="text" id="subject-id" placeholder="例：P001" autocomplete="off">
+    <input type="text" id="subject-id" placeholder="例：P001" autocomplete="off" maxlength="20">
   </div>
-  <button class="btn btn-primary" onclick="enterSubject()">実験を開始する →</button>
+  <button class="btn btn-p" onclick="enterSubject()">実験を開始する</button>
 </div>
 
-<!-- S1: 動画視聴 -->
+<!-- S1: 動画前計測 -->
+<div id="s-pre" class="screen">
+  <div class="kv">Step 1 · 事前計測</div>
+  <h2>計測を行います</h2>
+  <p class="lead">動画視聴の前に、一度時間感覚の計測を行います。<br>準備ができたらボタンを押してください。</p>
+  <div class="mbox">
+    <p class="instr" id="pre-instr">ボタンを押して計測を開始してください</p>
+    <button class="btn-m" id="pre-btn" onclick="prePress()">計測を開始する</button>
+    <div class="srow"><div class="sdot" id="pre-dot"></div><span class="stxt" id="pre-txt">待機中</span></div>
+  </div>
+</div>
+
+<!-- S2: 動画 -->
 <div id="s-video" class="screen">
-  <div class="tag">Step 1 · 動画視聴</div>
+  <div class="kv">Step 2 · 動画視聴</div>
   <h2>動画を視聴してください</h2>
   <div class="video-wrap" id="video-wrap">
     <div class="video-placeholder">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m16 8-5 3 5 3V8Z"/><path d="M8 21h8M12 17v4"/></svg>
-      <span>実験動画</span>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m16 8-5 3 5 3V8Z"/></svg>
+      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.1em">実験動画</span>
     </div>
   </div>
-  <p class="sub">動画を最後まで視聴し終えたら下のボタンを押してください。</p>
-  <button class="btn btn-primary" id="video-done-btn" onclick="videoDone()">動画を見終えた →</button>
+  <p class="lead" style="margin-bottom:1rem">動画を最後まで視聴し終えたら下のボタンを押してください。</p>
+  <button class="btn btn-p" id="video-done-btn" onclick="videoDone()">動画を見終えた</button>
 </div>
 
-<!-- S2: 計測 -->
+<!-- S3: 動画後計測 -->
 <div id="s-measure" class="screen">
-  <div class="tag">Step 2 · 時間感覚計測</div>
-  <div class="progress-wrap">
-    <div class="progress-meta">
-      <span class="progress-label">試行 <strong id="t-cur">0</strong> / <strong id="t-tot">5</strong></span>
-      <span class="progress-label" id="t-phase">待機中</span>
+  <div class="kv">Step 3 · 時間感覚計測</div>
+  <div class="prog-wrap">
+    <div class="prog-meta">
+      <span class="prog-lbl">試行 <strong id="t-cur">1</strong> / <strong id="t-tot">5</strong></span>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="p-fill" style="width:0%"></div></div>
+    <div class="prog-track"><div class="prog-fill" id="p-fill" style="width:0%"></div></div>
   </div>
-
-  <div id="waiting-box" class="wait-box card">
-    <div class="wait-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
-    <div class="wait-msg" id="wait-msg">次の計測まで待機中...</div>
+  <div id="wait-box" class="wait-box card" style="display:none">
+    <div class="wdots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+    <div class="wait-msg">しばらくお待ちください</div>
   </div>
-
-  <div id="measure-box" class="measure-box" style="display:none">
-    <p class="instruction" id="m-instruction">ボタンを押して計測を開始してください</p>
-    <button class="btn-measure" id="m-btn" onclick="measurePress()">計測を開始する</button>
-    <div class="status-row">
-      <div class="sdot" id="s-dot"></div>
-      <span class="stxt" id="s-txt">待機中</span>
-    </div>
+  <div id="mbox" class="mbox">
+    <p class="instr" id="m-instr">ボタンを押して計測を開始してください</p>
+    <button class="btn-m" id="m-btn" onclick="measurePress()">計測を開始する</button>
+    <div class="srow"><div class="sdot" id="s-dot"></div><span class="stxt" id="s-txt">待機中</span></div>
   </div>
 </div>
 
-<!-- S3: アンケート -->
+<!-- S4: アンケート -->
 <div id="s-survey" class="screen">
-  <div class="tag">Step 3 · アンケート</div>
+  <div class="kv">Step 4 · アンケート</div>
   <h2>アンケートにご回答ください</h2>
-  <p class="sub">以下の質問にお答えください。全て回答後に送信してください。</p>
   <div id="survey-form"></div>
-  <button class="btn btn-primary" id="submit-btn" onclick="submitAll()">結果を送信する →</button>
+  <button class="btn btn-p" id="submit-btn" onclick="submitAll()">結果を送信する</button>
 </div>
 
-<!-- S4: 完了 -->
+<!-- S5: 完了 -->
 <div id="s-done" class="screen">
-  <div class="thanks-box">
-    <div class="thanks-icon">🌿</div>
+  <div class="thanks">
+    <div class="thanks-mark">— COMPLETE —</div>
     <div class="thanks-title">ご協力ありがとうございました</div>
-    <p class="thanks-sub" style="margin-top:0.5rem;margin-bottom:2rem">データを送信しました。</p>
-    <button class="btn btn-primary" onclick="backToEntry()">次の被験者の実験を開始する →</button>
+    <p class="thanks-sub">データを送信しました。</p>
+    <button class="btn btn-p" onclick="backToEntry()">次の被験者の実験を開始する</button>
   </div>
 </div>
 
 </div><!-- /container -->
-
 <script>
-// ── 設定（admin.html で書き換え可能、localStorage 経由）──────────────────
+// ── 設定読込（URLパラメータ → localStorage → デフォルト）
 const DEFAULT_CFG = {
-  intervals: [0, 25, 30, 35, 30],   // 第1回は動画直後(0)、以降のインターバル秒
+  intervals: [25, 30, 35, 30],  // 動画後：1回目は即時、2回目以降のインターバル（秒）
   videoUrl: '',
   gasUrl: '',
-  surveyQuestions: [
-    // { text: '質問文', options: ['選択肢1','選択肢2'] } の形式で追加
-  ]
+  surveyQuestions: []
 };
-
 function loadCfg() {
-  try {
-    const s = localStorage.getItem('exp_config');
-    return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG;
-  } catch(e) { return DEFAULT_CFG; }
+  const p = new URLSearchParams(location.search), c = p.get('cfg');
+  if (c) { try { return Object.assign({}, DEFAULT_CFG, JSON.parse(atob(c))); } catch(e) {} }
+  try { const s = localStorage.getItem('exp_config'); return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG; }
+  catch(e) { return DEFAULT_CFG; }
 }
 
-// ── 状態 ──────────────────────────────────────────────────────────────────
-let cfg, subjectId, results, trialIndex, phase, startPressTime, shownAt, waitTimer;
-const synth = window.speechSynthesis;
+// ── 状態
+let cfg, subjectId, results = [], trialIndex = 0, phase = 'idle';
+let startPressTime, waitTimer;
+let prePhase = 'waiting-start';
+let videoEndTime = null; // 動画終了ボタンを押した瞬間（タイムスタンプ基準）
 
-function speak(text, cb) {
-  if (!synth) { cb && cb(); return; }
+const synth = window.speechSynthesis;
+function speak(t, cb) {
+  if (!synth) { cb && setTimeout(cb, 100); return; }
   synth.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.92;
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = 'ja-JP'; u.rate = 0.9;
   if (cb) u.onend = cb;
   synth.speak(u);
 }
-
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toSec(ms) {
+  // 小数第2位まで、秒単位で表示
+  return parseFloat((ms / 1000).toFixed(2));
 }
 
-// ── 被験者番号入力 ────────────────────────────────────────────────────────
+// ── S0: 被験者番号
 function enterSubject() {
   const val = document.getElementById('subject-id').value.trim();
   if (!val) { alert('被験者番号を入力してください'); return; }
@@ -214,67 +209,100 @@ function enterSubject() {
   results = [];
   trialIndex = 0;
   phase = 'idle';
-
-  document.getElementById('t-tot').textContent = cfg.intervals.length;
+  prePhase = 'waiting-start';
+  videoEndTime = null;
+  // 動画後の計測回数：即時1回 + intervals.length回
+  const postCount = cfg.intervals.length + 1;
+  document.getElementById('t-tot').textContent = postCount;
   setupVideo();
-  show('s-video');
+  show('s-pre');
+  speak('実験を開始します。ボタンが表示されたら押してください。');
 }
 
-// ── 動画セットアップ ──────────────────────────────────────────────────────
+// ── S1: 動画前計測
+function prePress() {
+  const now = performance.now();
+  const btn = document.getElementById('pre-btn');
+  if (prePhase === 'waiting-start') {
+    startPressTime = now;
+    prePhase = 'measuring';
+    btn.textContent = '20秒経ったと思ったら押してください';
+    btn.className = 'btn-m active';
+    document.getElementById('pre-instr').textContent = '計測中... 20秒経ったと感じたらボタンを押してください';
+    document.getElementById('pre-dot').className = 'sdot rec';
+    document.getElementById('pre-txt').textContent = '計測中';
+  } else if (prePhase === 'measuring') {
+    const ms = now - startPressTime;
+    results.push({
+      phase: 'pre',
+      trial: 0,
+      measuredSec: toSec(ms),
+      elapsedFromVideoEndSec: null,  // 動画前なのでnull
+      scheduledIntervalSec: null
+    });
+    prePhase = 'done';
+    btn.disabled = true;
+    btn.className = 'btn-m';
+    btn.textContent = '記録完了';
+    document.getElementById('pre-dot').className = 'sdot done';
+    document.getElementById('pre-txt').textContent = '記録済み';
+    setTimeout(() => show('s-video'), 700);
+  }
+}
+
+// ── S2: 動画
 function setupVideo() {
   const wrap = document.getElementById('video-wrap');
-  const url = cfg.videoUrl || '';
+  const url = (cfg.videoUrl || '').trim();
   if (!url) return;
-
-  let embed = '';
-  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
-  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-
-  if (ytMatch) {
-    embed = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-  } else if (driveMatch) {
-    embed = `<iframe width="100%" height="315" src="https://drive.google.com/file/d/${driveMatch[1]}/preview" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+  const gd = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (yt) {
+    wrap.innerHTML = `<iframe height="300" src="https://www.youtube.com/embed/${yt[1]}?autoplay=1" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+  } else if (gd) {
+    wrap.innerHTML = `<iframe height="300" src="https://drive.google.com/file/d/${gd[1]}/preview" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;
   } else {
-    embed = `<video src="${url}" controls autoplay style="width:100%;max-height:315px;display:block;"></video>`;
+    wrap.innerHTML = `<video src="${url}" controls autoplay style="width:100%;max-height:300px;display:block;"></video>`;
   }
-  wrap.innerHTML = embed;
 }
 
-// ── 動画終了 → 計測へ ────────────────────────────────────────────────────
 function videoDone() {
+  // ★ タイムスタンプ基準点：このボタンを押した瞬間
+  videoEndTime = performance.now();
   show('s-measure');
-  speak('動画の視聴が終わりました。これから時間感覚の計測を行います。ボタンが表示されたら押してください。', () => {
-    scheduleNext();
-  });
+  updateProgress();
+  // 1回目はインターバルなしで即座にボタン表示
+  showMeasureBtn(0);
 }
 
-// ── 次の試行をスケジュール ────────────────────────────────────────────────
+// ── S3: 計測ループ
+// trialNo: 0〜 (0=即時, 1〜=インターバル後)
 function scheduleNext() {
-  if (trialIndex >= cfg.intervals.length) { showSurvey(); return; }
+  trialIndex++;
+  if (trialIndex > cfg.intervals.length) {
+    showSurvey();
+    return;
+  }
+  const waitSec = cfg.intervals[trialIndex - 1]; // trialIndex=1→intervals[0], etc.
+  document.getElementById('wait-box').style.display = '';
+  document.getElementById('mbox').style.display = 'none';
+  waitTimer = setTimeout(() => {
+    showMeasureBtn(trialIndex);
+  }, waitSec * 1000);
+}
+
+function showMeasureBtn(trialNo) {
+  document.getElementById('wait-box').style.display = 'none';
+  document.getElementById('mbox').style.display = '';
   updateProgress();
 
-  const waitSec = cfg.intervals[trialIndex];
-  document.getElementById('waiting-box').style.display = '';
-  document.getElementById('measure-box').style.display = 'none';
-  document.getElementById('wait-msg').textContent =
-    waitSec === 0 ? '計測準備中...' : `次の計測まで約 ${waitSec} 秒 待機中...`;
-  document.getElementById('t-phase').textContent = '待機中';
-
-  waitTimer = setTimeout(() => showMeasureBtn(), waitSec * 1000 || 800);
-}
-
-function showMeasureBtn() {
-  shownAt = performance.now();
-  document.getElementById('waiting-box').style.display = 'none';
-  document.getElementById('measure-box').style.display = '';
   const btn = document.getElementById('m-btn');
   btn.textContent = '計測を開始する';
   btn.disabled = false;
-  btn.className = 'btn-measure';
-  document.getElementById('m-instruction').textContent = 'ボタンを押して計測を開始してください';
+  btn.className = 'btn-m';
+  document.getElementById('m-instr').textContent = 'ボタンを押して計測を開始してください';
   document.getElementById('s-dot').className = 'sdot';
   document.getElementById('s-txt').textContent = '待機中';
-  document.getElementById('t-phase').textContent = '計測待機';
   phase = 'waiting-start';
   speak('ボタンが表示されました。押してください。');
 }
@@ -287,65 +315,62 @@ function measurePress() {
     startPressTime = now;
     phase = 'measuring';
     btn.textContent = '20秒経ったと思ったら押してください';
-    btn.className = 'btn-measure active';
-    document.getElementById('m-instruction').textContent = '計測中... 20秒経ったと感じたらボタンを押してください';
+    btn.className = 'btn-m active';
+    document.getElementById('m-instr').textContent = '計測中... 20秒経ったと感じたらボタンを押してください';
     document.getElementById('s-dot').className = 'sdot rec';
     document.getElementById('s-txt').textContent = '計測中';
-    document.getElementById('t-phase').textContent = '計測中';
 
   } else if (phase === 'measuring') {
     const endTime = now;
-    const reactionMs = startPressTime - shownAt;
-    const measuredMs = endTime - startPressTime;
+    const ms = endTime - startPressTime;
+
+    // 動画終了からの経過時間（ボタンを最初に押した時点）
+    const elapsedMs = startPressTime - videoEndTime;
+
     results.push({
+      phase: 'post',
       trial: trialIndex + 1,
-      shownAt: shownAt,
-      startMs: startPressTime,
-      endMs: endTime,
-      reactionMs: parseFloat(reactionMs.toFixed(2)),
-      measuredMs: parseFloat(measuredMs.toFixed(2)),
-      measuredSec: parseFloat((measuredMs / 1000).toFixed(2)),
-      scheduledIntervalSec: cfg.intervals[trialIndex]
+      measuredSec: toSec(ms),
+      elapsedFromVideoEndSec: toSec(elapsedMs), // 動画終了ボタン押下からの経過秒
+      scheduledIntervalSec: trialIndex === 0 ? 0 : cfg.intervals[trialIndex - 1]
     });
+
     phase = 'idle';
     btn.disabled = true;
-    btn.className = 'btn-measure';
+    btn.className = 'btn-m';
     btn.textContent = '記録完了';
     document.getElementById('s-dot').className = 'sdot done';
     document.getElementById('s-txt').textContent = '記録済み';
-    document.getElementById('t-phase').textContent = '完了';
-    trialIndex++;
     setTimeout(() => scheduleNext(), 700);
   }
 }
 
 function updateProgress() {
-  const pct = (trialIndex / cfg.intervals.length) * 100;
-  document.getElementById('p-fill').style.width = pct + '%';
-  document.getElementById('t-cur').textContent = trialIndex;
+  const total = cfg.intervals.length + 1;
+  const done = trialIndex + 1;
+  document.getElementById('p-fill').style.width = Math.min(done / total * 100, 100) + '%';
+  document.getElementById('t-cur').textContent = done;
+  document.getElementById('t-tot').textContent = total;
 }
 
-// ── アンケート ────────────────────────────────────────────────────────────
+// ── S4: アンケート
 function showSurvey() {
   document.getElementById('p-fill').style.width = '100%';
-  document.getElementById('t-cur').textContent = cfg.intervals.length;
-
   const questions = cfg.surveyQuestions || [];
   const form = document.getElementById('survey-form');
   form.innerHTML = '';
-
   if (questions.length === 0) {
-    form.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:1.5rem">（アンケート項目は管理者が設定します）</p>';
+    form.innerHTML = '<p style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-bottom:1.5rem">（アンケート項目は管理者が設定します）</p>';
   } else {
     questions.forEach((q, i) => {
       const block = document.createElement('div');
       block.className = 'q-block card';
-      block.innerHTML = `<p class="q-text"><span class="q-num">Q${i+1}.</span>${q.text}</p>
-        <div class="radio-group" id="rg-${i}">
-          ${q.options.map((opt, j) => `
-            <label class="radio-label" id="rl-${i}-${j}">
-              <input type="radio" name="q${i}" value="${opt}" onchange="selectRadio(${i},${j})">
-              ${opt}
+      block.innerHTML = `<p class="q-text"><span class="q-num">Q${i+1}.</span>${esc(q.text)}</p>
+        <div class="rgroup" id="rg-${i}">
+          ${q.options.map((opt, j) =>
+            `<label class="rlabel" id="rl-${i}-${j}">
+              <input type="radio" name="q${i}" value="${esc(opt)}" onchange="selRadio(${i},${j})">
+              ${esc(opt)}
             </label>`).join('')}
         </div>`;
       form.appendChild(block);
@@ -353,23 +378,19 @@ function showSurvey() {
   }
   show('s-survey');
 }
-
-function selectRadio(qi, oi) {
-  const q = cfg.surveyQuestions[qi];
-  q.options.forEach((_, j) => {
-    document.getElementById(`rl-${qi}-${j}`).classList.toggle('selected', j === oi);
+function selRadio(qi, oi) {
+  cfg.surveyQuestions[qi].options.forEach((_, j) => {
+    document.getElementById(`rl-${qi}-${j}`).classList.toggle('sel', j === oi);
   });
 }
 
-// ── 送信 ──────────────────────────────────────────────────────────────────
+// ── 送信
 async function submitAll() {
-  // アンケート回答収集
   const answers = {};
   (cfg.surveyQuestions || []).forEach((q, i) => {
     const sel = document.querySelector(`input[name="q${i}"]:checked`);
     answers[`Q${i+1}`] = sel ? sel.value : '未回答';
   });
-
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> 送信中...';
@@ -378,13 +399,7 @@ async function submitAll() {
     subjectId,
     experimentDate: new Date().toISOString(),
     config: { intervals: cfg.intervals },
-    results: results.map(r => ({
-      trial: r.trial,
-      reactionMs: r.reactionMs,
-      measuredMs: r.measuredMs,
-      measuredSec: r.measuredSec,
-      scheduledIntervalSec: r.scheduledIntervalSec
-    })),
+    results: results,
     survey: answers
   };
 
@@ -397,11 +412,9 @@ async function submitAll() {
       });
     } catch(e) {}
   }
-
   show('s-done');
 }
 
-// ── 次の被験者へ ──────────────────────────────────────────────────────────
 function backToEntry() {
   clearTimeout(waitTimer);
   synth && synth.cancel();
@@ -409,7 +422,6 @@ function backToEntry() {
   show('s-entry');
 }
 
-// ── 初期化 ────────────────────────────────────────────────────────────────
 document.getElementById('subject-id').addEventListener('keydown', e => {
   if (e.key === 'Enter') enterSubject();
 });
