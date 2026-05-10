@@ -172,16 +172,39 @@ input[type=text]::placeholder{color:var(--text3);font-size:14px;}
 <script>
 // ── 設定読込（URLパラメータ → localStorage → デフォルト）
 const DEFAULT_CFG = {
-  intervals: [25, 30, 35, 30],  // 動画後：1回目は即時、2回目以降のインターバル（秒）
+  intervals: [25, 30, 35, 30],
   videoUrl: '',
   gasUrl: '',
   surveyQuestions: []
 };
-function loadCfg() {
-  const p = new URLSearchParams(location.search), c = p.get('cfg');
-  if (c) { try { return Object.assign({}, DEFAULT_CFG, JSON.parse(decodeURIComponent(c))); } catch(e) {} }
-  try { const s = localStorage.getItem('exp_config'); return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG; }
-  catch(e) { return DEFAULT_CFG; }
+
+async function loadCfg() {
+  const params = new URLSearchParams(location.search);
+
+  // ?gas=URL がある場合はGASから設定を取得
+  const gasParam = params.get('gas');
+  if (gasParam) {
+    const gasUrl = decodeURIComponent(gasParam);
+    try {
+      const res = await fetch(gasUrl + '?action=getConfig');
+      const data = await res.json();
+      if (data.status === 'ok' && data.config) {
+        return Object.assign({}, DEFAULT_CFG, data.config);
+      }
+    } catch(e) {}
+  }
+
+  // ?cfg= がある場合はURLから設定を取得（フォールバック）
+  const cfgParam = params.get('cfg');
+  if (cfgParam) {
+    try { return Object.assign({}, DEFAULT_CFG, JSON.parse(decodeURIComponent(cfgParam))); } catch(e) {}
+  }
+
+  // localStorageから取得
+  try {
+    const s = localStorage.getItem('exp_config');
+    return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG;
+  } catch(e) { return DEFAULT_CFG; }
 }
 
 // ── 状態
@@ -213,17 +236,26 @@ function toSec(ms) {
 }
 
 // ── S0: 被験者番号
-function enterSubject() {
+async function enterSubject() {
   const val = document.getElementById('subject-id').value.trim();
   if (!val) { alert('被験者番号を入力してください'); return; }
   subjectId = val;
-  cfg = loadCfg();
+
+  const btn = document.querySelector('#s-entry .btn-p');
+  btn.disabled = true;
+  btn.textContent = '設定を読み込み中...';
+
+  cfg = await loadCfg();
   results = [];
   trialIndex = 0;
   phase = 'idle';
   prePhase = 'waiting-start';
   videoEndTime = null;
-  // 動画後の計測回数：即時1回 + intervals.length回
+  startPressTime = null;
+
+  btn.disabled = false;
+  btn.textContent = '実験を開始する';
+
   const postCount = cfg.intervals.length + 1;
   document.getElementById('t-tot').textContent = postCount;
   setupVideo();

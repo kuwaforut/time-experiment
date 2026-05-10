@@ -281,11 +281,26 @@ function collectCfg() {
   };
 }
 
-// ── 保存
-function saveAll() {
+// ── 保存（localStorageとGASの両方に保存）
+async function saveAll() {
   const cfg = collectCfg();
   localStorage.setItem('exp_config', JSON.stringify(cfg));
-  showToast('設定を保存しました ✓');
+
+  if (!cfg.gasUrl) {
+    showToast('設定を保存しました ✓（GAS URL未設定のためローカルのみ）');
+    return;
+  }
+
+  try {
+    await fetch(cfg.gasUrl, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'saveConfig', config: cfg })
+    });
+    showToast('設定を保存しました ✓（全PCに反映されます）');
+  } catch(e) {
+    showToast('ローカルに保存しました（GAS送信失敗）');
+  }
 }
 
 // IME変換中のEnterを無視して選択肢追加
@@ -294,11 +309,28 @@ function handleOptEnter(event, qi) {
 }
 
 // ── リンク生成（日本語対応：encodeURIComponent使用）
-function generateLink() {
+async function generateLink() {
   const cfg = collectCfg();
   localStorage.setItem('exp_config', JSON.stringify(cfg));
-  const encoded = encodeURIComponent(JSON.stringify(cfg));
-  const url = location.origin + location.pathname.replace('admin.html','index.html') + '?cfg=' + encoded;
+
+  if (cfg.gasUrl) {
+    try {
+      await fetch(cfg.gasUrl, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'saveConfig', config: cfg })
+      });
+    } catch(e) {}
+  }
+
+  // GAS URLがあればそれだけのシンプルなURL、なければ設定埋め込みURL
+  let url;
+  if (cfg.gasUrl) {
+    url = location.origin + location.pathname.replace('admin.html', 'index.html') + '?gas=' + encodeURIComponent(cfg.gasUrl);
+  } else {
+    const encoded = encodeURIComponent(JSON.stringify(cfg));
+    url = location.origin + location.pathname.replace('admin.html', 'index.html') + '?cfg=' + encoded;
+  }
   generatedUrl = url;
   document.getElementById('link-url').textContent = url;
   document.getElementById('link-result').style.display = '';
