@@ -171,18 +171,109 @@ const DEFAULT_IV = [25, 30, 35, 30];
 let intervals = [...DEFAULT_IV];
 let questions = [];
 let generatedUrl = '';
+let currentGasUrl = '';
+let loadedTimestamp = 0;
+let pollTimer = null;
 
-function load() {
+// ── 起動時読み込み
+async function load() {
+  // まずlocalStorageから表示（即時）
   try {
     const s = localStorage.getItem('exp_config');
-    if (!s) { renderIV(); renderSurvey(); return; }
-    const c = JSON.parse(s);
-    if (c.intervals) intervals = c.intervals;
-    if (c.videoUrl) document.getElementById('video-url').value = c.videoUrl;
-    if (c.gasUrl) document.getElementById('gas-url').value = c.gasUrl;
-    if (c.surveyQuestions) questions = c.surveyQuestions.map(q => ({...q, options:[...q.options]}));
+    if (s) {
+      const c = JSON.parse(s);
+      applyConfig(c);
+    }
   } catch(e) {}
   renderIV(); renderSurvey();
+
+  // GAS URLがあればGASから最新設定を取得
+  const gasUrl = document.getElementById('gas-url').value.trim();
+  if (gasUrl) await fetchAndApplyConfig(gasUrl);
+
+  // GAS URLが入力されたらポーリング開始
+  document.getElementById('gas-url').addEventListener('change', () => {
+    startPolling(document.getElementById('gas-url').value.trim());
+  });
+}
+
+function applyConfig(c) {
+  if (c.intervals) intervals = [...c.intervals];
+  if (c.videoUrl) document.getElementById('video-url').value = c.videoUrl;
+  if (c.gasUrl) {
+    document.getElementById('gas-url').value = c.gasUrl;
+    currentGasUrl = c.gasUrl;
+  }
+  if (c.surveyQuestions) questions = c.surveyQuestions.map(q => ({...q, options:[...q.options]}));
+}
+
+async function fetchAndApplyConfig(gasUrl) {
+  if (!gasUrl) return;
+  try {
+    const res = await fetch(gasUrl + '?action=getConfig');
+    const data = await res.json();
+    if (data.status === 'ok' && data.config) {
+      applyConfig(data.config);
+      localStorage.setItem('exp_config', JSON.stringify(data.config));
+      loadedTimestamp = data.timestamp || 0;
+      currentGasUrl = gasUrl;
+      renderIV(); renderSurvey();
+      startPolling(gasUrl);
+    }
+  } catch(e) {}
+}
+
+// ── ポーリング（30秒ごとにタイムスタンプを確認）
+function startPolling(gasUrl) {
+  if (pollTimer) clearInterval(pollTimer);
+  if (!gasUrl) return;
+  currentGasUrl = gasUrl;
+  pollTimer = setInterval(() => checkForUpdates(gasUrl), 30000);
+}
+
+async function checkForUpdates(gasUrl) {
+  try {
+    const res = await fetch(gasUrl + '?action=getTimestamp&t=' + Date.now());
+    const data = await res.json();
+    if (data.status === 'ok' && data.timestamp && data.timestamp > loadedTimestamp) {
+      showUpdateBanner();
+    }
+  } catch(e) {}
+}
+
+function showUpdateBanner() {
+  let banner = document.getElementById('update-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'update-banner';
+    banner.style.cssText = `
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      background:#8b3a0f;color:#fff;
+      padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+      font-family:var(--mono);font-size:12px;
+    `;
+    banner.innerHTML = `
+      <span>⚠ 設定が別のPCで変更されています。このバージョンは古い可能性があります。</span>
+      <button onclick="reloadConfig()" style="background:#fff;color:#8b3a0f;border:none;border-radius:5px;padding:6px 14px;font-family:var(--mono);font-size:12px;cursor:pointer;font-weight:500;">
+        最新の設定を読み込む
+      </button>`;
+    document.body.prepend(banner);
+    // ページ全体を少し押し下げる
+    document.body.style.paddingTop = '48px';
+  }
+}
+
+async function reloadConfig() {
+  const gasUrl = document.getElementById('gas-url').value.trim() || currentGasUrl;
+  if (!gasUrl) return;
+  const banner = document.getElementById('update-banner');
+  if (banner) banner.querySelector('button').textContent = '読み込み中...';
+  await fetchAndApplyConfig(gasUrl);
+  if (banner) {
+    banner.remove();
+    document.body.style.paddingTop = '';
+  }
+  showToast('最新の設定を読み込みました ✓');
 }
 
 // ── インターバル
@@ -297,6 +388,15 @@ async function saveAll() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'saveConfig', config: cfg })
     });
+    // 保存後に最新タイムスタンプを取得して自分のloadedTimestampを更新
+    setTimeout(async () => {
+      try {
+        const res = await fetch(cfg.gasUrl + '?action=getTimestamp&t=' + Date.now());
+        const data = await res.json();
+        if (data.timestamp) loadedTimestamp = data.timestamp;
+      } catch(e) {}
+    }, 1500);
+    startPolling(cfg.gasUrl);
     showToast('設定を保存しました ✓（全PCに反映されます）');
   } catch(e) {
     showToast('ローカルに保存しました（GAS送信失敗）');
