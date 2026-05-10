@@ -167,7 +167,7 @@ const DEFAULT_CFG = {
 };
 function loadCfg() {
   const p = new URLSearchParams(location.search), c = p.get('cfg');
-  if (c) { try { return Object.assign({}, DEFAULT_CFG, JSON.parse(atob(c))); } catch(e) {} }
+  if (c) { try { return Object.assign({}, DEFAULT_CFG, JSON.parse(decodeURIComponent(c))); } catch(e) {} }
   try { const s = localStorage.getItem('exp_config'); return s ? Object.assign({}, DEFAULT_CFG, JSON.parse(s)) : DEFAULT_CFG; }
   catch(e) { return DEFAULT_CFG; }
 }

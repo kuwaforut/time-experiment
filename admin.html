@@ -236,7 +236,7 @@ function renderSurvey() {
       <input class="q-tinput" type="text" placeholder="質問文を入力..." value="${esc(q.text)}" oninput="questions[${qi}].text=this.value">
       <div class="opts-wrap" id="opts-${qi}"></div>
       <div class="opt-add">
-        <input class="opt-input" type="text" id="oi-${qi}" placeholder="選択肢を入力して追加..." onkeydown="if(event.key==='Enter')addOpt(${qi})">
+        <input class="opt-input" type="text" id="oi-${qi}" placeholder="選択肢を入力して追加..." onkeydown="handleOptEnter(event,${qi})">
         <button class="btn-sm btn-accent" onclick="addOpt(${qi})">追加</button>
       </div>`;
     b.appendChild(item);
@@ -288,12 +288,17 @@ function saveAll() {
   showToast('設定を保存しました ✓');
 }
 
-// ── リンク生成
+// IME変換中のEnterを無視して選択肢追加
+function handleOptEnter(event, qi) {
+  if (event.key === 'Enter' && !event.isComposing) addOpt(qi);
+}
+
+// ── リンク生成（日本語対応：encodeURIComponent使用）
 function generateLink() {
   const cfg = collectCfg();
   localStorage.setItem('exp_config', JSON.stringify(cfg));
-  const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
-  const url = location.origin + location.pathname.replace('admin.html','index.html') + '?cfg=' + base64;
+  const encoded = encodeURIComponent(JSON.stringify(cfg));
+  const url = location.origin + location.pathname.replace('admin.html','index.html') + '?cfg=' + encoded;
   generatedUrl = url;
   document.getElementById('link-url').textContent = url;
   document.getElementById('link-result').style.display = '';
