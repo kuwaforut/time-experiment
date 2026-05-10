@@ -75,6 +75,7 @@ input[type=text]::placeholder{color:var(--text3);font-size:14px;}
 .thanks-sub{font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;margin-bottom:2.5rem;}
 .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.caution{background:#fff5f5;border:1.5px solid #e05555;border-radius:8px;padding:14px 16px;margin-bottom:1.5rem;font-size:13px;color:#b03030;line-height:1.9;}
 </style>
 </head>
 <body>
@@ -92,7 +93,18 @@ input[type=text]::placeholder{color:var(--text3);font-size:14px;}
   <button class="btn btn-p" onclick="enterSubject()">実験を開始する</button>
 </div>
 
-<!-- S1: 動画前計測 -->
+<!-- S1: 説明画面 -->
+<div id="s-caution" class="screen">
+  <div class="kv">Step 1 · 説明</div>
+  <h2>計測の説明</h2>
+  <div class="caution" style="font-size:15px;line-height:2.1;padding:20px 20px;">
+    頭の中で数を数えるときは、<br>
+    <strong>「0」と言い始めた瞬間に開始ボタンを押して、<br>「20」と言い始める瞬間に停止ボタンを押してください。</strong>
+  </div>
+  <button class="btn btn-p" onclick="show('s-pre')">理解した →</button>
+</div>
+
+<!-- S1b: 動画前計測 -->
 <div id="s-pre" class="screen">
   <div class="kv">Step 1 · 事前計測</div>
   <h2>計測を行います</h2>
@@ -215,8 +227,8 @@ function enterSubject() {
   const postCount = cfg.intervals.length + 1;
   document.getElementById('t-tot').textContent = postCount;
   setupVideo();
-  show('s-pre');
-  speak('実験を開始します。ボタンが表示されたら押してください。');
+  show('s-caution');
+  speak('実験を開始します。説明をよく読んでから次に進んでください。');
 }
 
 // ── S1: 動画前計測
