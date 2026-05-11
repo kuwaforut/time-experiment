@@ -177,13 +177,6 @@ let pollTimer = null;
 
 // ── 起動時読み込み
 async function load() {
-  // URLパラメータにgasがあれば優先してセット
-  const params = new URLSearchParams(location.search);
-  const gasParam = params.get('gas');
-  if (gasParam) {
-    document.getElementById('gas-url').value = decodeURIComponent(gasParam);
-  }
-
   // まずlocalStorageから表示（即時）
   try {
     const s = localStorage.getItem('exp_config');
@@ -192,6 +185,16 @@ async function load() {
       applyConfig(c);
     }
   } catch(e) {}
+
+  // URLパラメータのgasを最優先で上書きセット（localStorageより後）
+  const params = new URLSearchParams(location.search);
+  const gasParam = params.get('gas');
+  if (gasParam) {
+    const decodedGas = decodeURIComponent(gasParam);
+    document.getElementById('gas-url').value = decodedGas;
+    currentGasUrl = decodedGas;
+  }
+
   renderIV(); renderSurvey();
 
   // GAS URLがあればGASから最新設定を取得
